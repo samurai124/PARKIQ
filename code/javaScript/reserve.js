@@ -1,12 +1,17 @@
 // reservation history
-const reservationHistory = [
-    {id : 1 , carPlat : "AA61",carType : 'car' , spotId : 'A1' , enterTime : "10:10" , leaveTime : "12:10", duration :  "2h 30m", price : 9.5 },
-]
+// const reservationHistory = [
+//     {id : 1 , carPlat : "AA61",carType : 'car' , spotId : 'A1' , enterTime : "10:10" , leaveTime : "12:10", duration :  "2h 30m", price : 9.5 },
+// ]
+let reservationHistory = JSON.parse(localStorage.getItem('reservationHistory')) || [];
+
+console.log("hello");
+console.log(parkingSpots);
 
 
+
+//localStorage.setItem('reservationHistory',JSON.stringify(reservationHistory));
 //temporaire  reservation active 
 const reservationActive = JSON.parse(localStorage.getItem("reservationActive"));
-
 
 // function to add a temporaire  reservation active to locale storage
 function  temporaireReservationActive(reservation){
@@ -18,14 +23,6 @@ function  temporaireReservationActive(reservation){
     localStorage.setItem("reservationActive" , JSON.stringify(reservationActive));
 }
 
-function removeReservationActive(reservation){
-    let reservationActive = JSON.parse(localStorage.getItem("reservationActive"));
-    if(!reservationActive){
-        return
-    }
-    reservationActive = removeReservationActive.filter((e)=> e.id == reservation.id)
-    localStorage.setItem("reservationActive" , JSON.stringify(reservationActive));
-}
 
 
 
@@ -33,6 +30,7 @@ function removeReservationActive(reservation){
 
 // function to display spots
 function dipslaySpots() {
+    console.log(parkingSpots);
     let spots_container = document.querySelector("#spots_container");
     spots_container.innerHTML = "";
     parkingSpots.forEach(element => {

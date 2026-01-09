@@ -3,6 +3,22 @@ let clock_container = document.querySelector('#clock_container');
 let entery_time = document.querySelector('#entery_time');
 let car_parked_plat = document.querySelector('#car_parked_plat');
 let intervalId;
+let reservationHistory = JSON.parse(localStorage.getItem('reservationHistory'));
+console.log(reservationHistory);
+
+const params = new URLSearchParams(window.location.search);
+const userString = params.get("reservation");
+const reservation =  JSON.parse(decodeURIComponent(userString));
+
+
+function removeReservationActive(reservation){
+    let reservationActive = JSON.parse(localStorage.getItem("reservationActive"));
+    if(!reservationActive){
+        return
+    }
+    reservationActive = reservationActive.filter((e)=> e.id != reservation.id)
+    localStorage.setItem("reservationActive" , JSON.stringify(reservationActive));
+}
 
 
 
@@ -36,12 +52,29 @@ clock();
 
 // details function 
 function details() {
-    const params = new URLSearchParams(window.location.search);
-    const userString = params.get("reservation");
-    const reservation =  JSON.parse(decodeURIComponent(userString));
     console.log(reservation);
     spot_used_id.innerHTML = reservation.spotId;
     entery_time.innerHTML = reservation.enterTime
     car_parked_plat.innerHTML = reservation.carPlat.toUpperCase();
 }
 details();
+
+
+// function to end the parking time
+function confirmExit(){
+    clearInterval(intervalId);
+    reservation.leaveTime = MomentTime();
+    reservation.duration = subtractTimes(MomentTime(), reservation.enterTime);
+    reservation.price = calculatePrice(reservation.duration);
+    if(reservationHistory.find((e)=> e.id == reservation.id)){
+        return
+    }
+    reservationHistory.push(reservation);
+    localStorage.setItem('reservationHistory',JSON.stringify(reservationHistory));
+    console.log(reservation.spotId);
+    updateStatus(reservation.spotId,false);
+    setLocaleStorage();
+    removeReservationActive(reservation)
+    const query = encodeURIComponent(JSON.stringify(reservation));
+    window.location.href = `/code/html/endOfsession.html?reservation=${query}`;
+}

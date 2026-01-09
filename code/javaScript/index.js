@@ -19,7 +19,8 @@ function setLocaleStorage() {
     }
 }
 
-
+// updateStatus("A9",false)
+// setLocaleStorage();
 
 // function to get items from locateStorage
 function getLocaleStorage() {
@@ -145,6 +146,68 @@ function subtractTimes(time1, time2) {
     const hours = Math.floor(diffMinutes / 60);
     const minutes = diffMinutes % 60;
     return `${hours}h ${minutes}m`;
+}
+
+/**
+ * Calculates parking fee based on total minutes.
+ * Rules: 
+ * - 1st hour: 5 MAD
+ * - Subsequent hours: 3 MAD each
+ * - Any fraction of an hour counts as a full hour
+ */
+function calculatePriceFromDuration(durationStr) {
+    const match = durationStr.match(/(\d+)h\s+(\d+)m/);
+    if (!match) return 0;
+
+    const hours = parseInt(match[1]);
+    const minutes = parseInt(match[2]);
+    
+    const totalMinutes = (hours * 60) + minutes;
+    if (totalMinutes <= 0) return 0;
+
+    const billableHours = Math.ceil(totalMinutes / 60);
+    
+    const firstHourRate = 5;
+    const extraHourRate = 3;
+
+    if (billableHours === 1) {
+        return firstHourRate;
+    } else {
+        return firstHourRate + (billableHours - 1) * extraHourRate;
+    }
+}
+
+
+
+function calculatePrice(duration) {
+    let hours = 0;
+    let minutes = 0;
+    let fee = 0;
+
+    const match = duration.match(/(\d+)h\s+(\d+)m/);
+
+    if (match) {
+        hours = parseInt(match[1]);
+        minutes = parseInt(match[2]);
+    }
+
+    // Determine total billable hours
+    // If there are any minutes, we round the hours up by 1
+    let billableHours = hours;
+    if (minutes > 0) {
+        billableHours += 1;
+    }
+
+    if (billableHours === 0) {
+        fee = 0;
+    } else if (billableHours === 1) {
+        fee = 5;
+    } else {
+        // 5 MAD for the first hour + 3 MAD for every hour after
+        fee = 5 + (billableHours - 1) * 3;
+    }
+
+    return fee;
 }
 
 
