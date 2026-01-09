@@ -1,0 +1,2 @@
+verifyCapacity();
+updateMainCard();
